@@ -29,7 +29,7 @@ export function Torch({
 				margin: 'auto',
 				opacity: status ? 1 : 0.5,
 				position: 'absolute',
-				bottom: 60,
+				bottom: 20,
 				left: 0,
 				right: 0,
 			}}

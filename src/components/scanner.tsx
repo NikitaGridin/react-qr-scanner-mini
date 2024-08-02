@@ -124,6 +124,7 @@ export function Scanner({
 					border: '2px solid white',
 					boxShadow: '0 0 0 100vmax rgba(0,0,0,0.7)', // Darkens the area outside the box
 					pointerEvents: 'none', // Makes the overlay non-interactive
+					borderRadius: 24,
 				}}
 			/>
 			{torchSupported && (
