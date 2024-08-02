@@ -1,5 +1,5 @@
 export const defaultConstraints: MediaTrackConstraints = {
 	facingMode: 'environment',
-	// width: { ideal: 1280 },
-	// height: { ideal: 1024 },
+	width: 480,
+	height: 320,
 }
