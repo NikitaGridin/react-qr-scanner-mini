@@ -5,7 +5,7 @@ import { IStartCamera, IStartTaskResult, IStopTaskResult } from '../types/types'
 type TaskResult = IStartTaskResult | IStopTaskResult
 type CreateObjectURLCompat = (obj: MediaSource | Blob | MediaStream) => string
 
-export default function useCamera() {
+export function useCamera() {
 	const taskQueue = useRef<Promise<TaskResult>>(
 		Promise.resolve({ type: 'stop', data: {} })
 	)

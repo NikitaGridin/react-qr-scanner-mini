@@ -1,11 +1,10 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import useCamera from '../hooks/useCamera'
-import useScanner from '../hooks/useScanner'
+import { useCamera } from '../hooks/useCamera'
+import { useScanner } from '../hooks/useScanner'
 import { defaultConstraints } from '../misc/defaultConstraints'
 import deepEqual from '../utilities/deepEqual'
 import { Torch } from './torch'
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function Scanner({
 	onScan,
 	allowMultiple,
@@ -14,6 +13,7 @@ export function Scanner({
 	allowMultiple?: boolean
 }) {
 	const videoRef = useRef<HTMLVideoElement>(null)
+	const canvasRef = useRef<HTMLCanvasElement>(null)
 
 	const mergedConstraints = useMemo(
 		() => ({
@@ -30,6 +30,7 @@ export function Scanner({
 	const camera = useCamera()
 	const { startScanning } = useScanner({
 		videoElementRef: videoRef,
+		canvasElementRef: canvasRef, // Pass canvas ref to the scanner
 		onScan,
 		audio: true,
 		allowMultiple,
@@ -57,7 +58,7 @@ export function Scanner({
 
 	const onCameraChange = async () => {
 		const videoEl = videoRef.current
-		if (!videoEl) throw new Error('Video or Canvas element is missing.')
+		if (!videoEl) throw new Error('Video element is missing.')
 
 		if (cameraSettings.shouldStream) {
 			await camera.stopCamera()
@@ -66,7 +67,6 @@ export function Scanner({
 				await camera.startCamera(videoEl, cameraSettings)
 				setIsCameraActive(!!videoEl)
 
-				// Check for torch support
 				const stream = videoEl.srcObject
 				if (stream instanceof MediaStream) {
 					const track = stream.getVideoTracks()[0]
@@ -97,7 +97,7 @@ export function Scanner({
 
 	useEffect(() => {
 		if (shouldScan) {
-			if (!videoRef.current) {
+			if (!videoRef.current || !canvasRef.current) {
 				throw new Error('Required elements are not defined.')
 			}
 			startScanning()
@@ -105,13 +105,26 @@ export function Scanner({
 	}, [shouldScan, startScanning])
 
 	return (
-		<div>
+		<div style={{ position: 'relative', width: '100%', height: '100vh' }}>
 			<video
 				ref={videoRef}
 				autoPlay
 				muted
 				playsInline
-				style={{ width: '100%' }}
+				style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+			/>
+			<canvas ref={canvasRef} style={{ display: 'none' }} />
+			<div
+				style={{
+					position: 'absolute',
+					top: '20%',
+					left: '10%',
+					width: '80%',
+					height: '60%',
+					border: '2px solid white',
+					boxShadow: '0 0 0 100vmax rgba(0,0,0,0.7)', // Darkens the area outside the box
+					pointerEvents: 'none', // Makes the overlay non-interactive
+				}}
 			/>
 			{torchSupported && (
 				<Torch
