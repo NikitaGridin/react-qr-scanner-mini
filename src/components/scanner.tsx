@@ -111,7 +111,7 @@ export function Scanner({
 				autoPlay
 				muted
 				playsInline
-				// style={{ width: '100%', height: '100%' }}
+				style={{ width: '100%' }}
 			/>
 			{torchSupported && (
 				<Torch
