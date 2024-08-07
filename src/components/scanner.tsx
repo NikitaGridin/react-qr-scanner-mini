@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useCamera } from '../hooks/useCamera'
 import { useScanner } from '../hooks/useScanner'
 import { defaultConstraints } from '../misc/defaultConstraints'
@@ -12,6 +12,9 @@ export function Scanner({
 	onScan: (decodedText: string) => void
 	allowMultiple?: boolean
 }) {
+	const memoScann = useCallback((decodedText: string) => {
+		onScan(decodedText)
+	}, [])
 	const videoRef = useRef<HTMLVideoElement>(null)
 	const canvasRef = useRef<HTMLCanvasElement>(null)
 
@@ -31,7 +34,7 @@ export function Scanner({
 	const { startScanning } = useScanner({
 		videoElementRef: videoRef,
 		canvasElementRef: canvasRef, // Pass canvas ref to the scanner
-		onScan,
+		onScan: memoScann,
 		audio: true,
 		allowMultiple,
 	})
